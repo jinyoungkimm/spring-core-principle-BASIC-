@@ -1,14 +1,153 @@
-객체 지향의 핵심 : 다형성 
-	역할과 구현을 분리 -> 클라이언트 코드 변경 없이 서버 코드의 무한한 확장이 가능
-		-> 그러나 다형성만으로는 ocp+dip를 지킬 수가 x(=클라이언트의 코드 변경 없이 기능 확장 x + 구현체 선언 없이 인터페이스만으로는 서버 객체 참조x)
- 			 ->  스프링의 DI 컨테이너(IoC 컨테이너) 기술은 위 2가지 문제를 해결!
+[Japanese]
+日本語版 — オブジェクト指向の核心：多態性とDI
+1️⃣ 多態性の核心
 
-※[이상적]으로는 모든 설계에 인터페이스를 구현하는 것
-・하부 구현체에 대한 정책이 변경이되거나 정해지지 않아도 피해를 최소화할 수가 있다. 
-  ex1) RDBMS를 사용하다가 NO-SQL로 변경 시 인터페이스에 따라 구현하여 변경하면 됨. 
-  ex2) 할인 정책이 아직 정해지지 않아도, 인터페이스에 선언만 해놓고 구현체는 내부 정의를 비워 놓던지 "0원 할인"으로 임시 코딩을 해 놓고, 정책이 정해지면 그때 그 부분만 변경하면 된다. 
+役割（インターフェース） と 実装（具体クラス） を分離
+→ クライアントコードを変更せずにサーバー機能を拡張可能
 
-※모든 설계에 인터페이스를 부여하는 것에는 문제점도 분명 있다. 
-・클라이언트에 정의돼 있는 인터페이스가 어떤 구현체에 의존하는 지 개발자가 일일이 다 열어 봐야 한다. 
--> 김영한의 실무 노하우 : 기능 확장 가능성이 없다면, 구체 클래스에 의존시키자!
-만약 향후 기능 확장을 하게 된다면, 그때 가서 인터페이스로의 리팩토링을 통해서 DIP 원칙을 따르자
+しかし、多態性だけではOCPとDIPを完全に満たせない。
+
+2️⃣ 多態性だけでは不十分な理由
+
+拡張するにはクライアントが直接実装クラスを生成する必要がある（DIP違反）
+→ クライアントコードの変更が必要（OCP違反）
+
+インターフェースだけではオブジェクト生成や注入ができない
+→ 結局、実装を知っている必要がある
+
+3️⃣ Spring DIコンテナの役割
+
+SpringのIoC/DIコンテナはこれらの問題を解決する。
+
+✔️ オブジェクト生成と依存関係の注入を管理
+✔️ クライアントはインターフェースだけ知っていればOK
+✔️ 実装を変更してもクライアントコードは変更不要 → OCP + DIPを満たす
+
+4️⃣ インターフェースを全てに使う：理想だが実務では注意
+理想的な設計：
+
+どの実装が来るか分からない場合でも、インターフェースがあれば柔軟に対応可能
+
+例：RDB → NoSQLに変更
+
+例：割引ポリシー未決定 → インターフェースを定義してデフォルト「0円割引」で仮実装
+
+実務上の問題：
+
+不必要にインターフェースを作ると複雑化
+
+どの実装に依存しているか都度確認する必要があり、生産性低下
+
+5️⃣ 実務的ルール（キム・ヨンハンの知見）
+
+将来拡張の可能性がある場合のみインターフェースを使う。
+拡張の可能性がなければ具体クラスに依存してよい。
+将来拡張が必要になった時に、インターフェースへリファクタリングすればOK。
+
+📘 一行まとめ
+
+多態性は拡張の扉を開くが、OCP/DIPを完成させるわけではない。
+Spring DIがそれを完成させる。
+拡張可能性のある部分だけにインターフェースを使う。
+------------------------------------------------------------------------------------------------------------------------
+[English]
+Object-Oriented Core: Polymorphism & DI
+1️⃣ Core of Polymorphism
+
+Separate role (interface) and implementation (concrete class)
+→ Client code can remain unchanged while server functionality can be extended.
+
+However, polymorphism alone cannot fully satisfy OCP and DIP.
+
+2️⃣ Why Polymorphism Alone is Not Enough
+
+To extend, the client must directly create the implementation (violates DIP)
+→ Client code changes (OCP violation)
+
+Interface alone cannot instantiate or inject objects
+→ Implementation must be known
+
+3️⃣ Role of Spring DI Container
+
+Spring’s IoC/DI container solves these issues.
+
+✔️ Manages object creation and dependency injection
+✔️ Client only needs to know the interface
+✔️ Changing implementation does not require client changes → satisfies OCP + DIP
+
+4️⃣ Using Interfaces Everywhere: Ideal but Not Always Practical
+Ideal Design:
+
+When the concrete implementation is unknown, interface allows flexible changes
+
+Example: Switch from RDB → NoSQL
+
+Example: Discount policy not yet decided → Keep interface, implement default "0 discount"
+
+Practical Problem:
+
+Using interfaces unnecessarily increases complexity
+
+Developer must check which implementation is actually linked → reduces productivity
+
+5️⃣ Practical Rule (Kim Young-han’s Insight)
+
+Use interface only if the feature might need extension in the future.
+If no extension is expected, depend on concrete class.
+Refactor to interface later if needed.
+
+📘 One-line Summary
+
+Polymorphism opens the door to extension, but does not complete OCP/DIP.
+Spring DI completes it.
+Use interfaces only where extension is likely.
+------------------------------------------------------------------------------------------------------------------------
+[Korean]
+✅ 객체 지향 핵심 요약 — 다형성과 스프링 DI
+1️⃣ 다형성의 핵심
+
+역할(인터페이스) 과 구현(구체 클래스) 를 분리하면
+→ 클라이언트 코드를 바꾸지 않고 서버 기능을 확장할 수 있다.
+
+하지만 다형성만으로는 OCP와 DIP를 완전히 만족시킬 수 없다.
+
+2️⃣ 다형성만으로 부족한 이유
+
+확장하려면 클라이언트가 new 구현체를 직접 생성해야 해서(DIP 위반)
+→ 클라이언트 코드가 변경됨(OCP 위반)
+
+인터페이스만으로는 객체 생성·주입이 불가능
+→ 결국 구현체를 알아야 함
+
+3️⃣ 스프링 DI 컨테이너의 역할
+
+스프링의 IoC/DI 컨테이너는 위 문제를 해결한다.
+
+✔️ 객체 생성, 의존관계 주입을 컨테이너가 담당
+✔️ 클라이언트는 인터페이스만 알면 되고
+✔️ 구현체 변경 시 클라이언트 코드는 변경 없음 → OCP + DIP 충족
+
+4️⃣ 인터페이스를 모든 곳에 쓰는 것이 이상적이지만…(현실적인 문제)
+이상적인 설계:
+
+어떤 구현체가 올지 모르는 상황에서도 인터페이스를 두면
+→ 변경에 매우 유연
+
+예: RDB → NoSQL 교체
+
+예: 할인 정책 미정 → 인터페이스만 두고 기본 구현(0원 할인)으로 임시 처리
+
+현실의 문제점:
+
+확장 가능성이 없는 기능에도 인터페이스를 남발하면 복잡도만 증가
+
+어떤 구현체가 연결되어 있는지 매번 추적해야 함 → 실무 생산성 저하
+
+5️⃣ 김영한 실무 원칙(아주 중요)
+
+미래에 확장될 가능성이 있다면 인터페이스를 사용하고,
+확장 가능성이 없다면 그냥 구체 클래스에 의존해도 된다.
+나중에 확장 필요가 생기면 그때 인터페이스로 리팩토링하자.
+
+------------------------------------------------------------------------------------------------------------------------
+
