@@ -1,7 +1,18 @@
 package hello.core.member;
 
 public class MemberServiceImpl implements MemberService{
-    private final MemberRepository memberRepository = new MemoryMemberRepository();
+    /**
+     *  DIP遵守 : インターフェースだけに依存
+     *  → fianlでもコンストラクタにより初期化すれば、コンパイラーエラーは発生しない
+     */
+    private final MemberRepository memberRepository;
+
+    /**
+     * コンストラクタインジェクション
+     */
+    public MemberServiceImpl(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
     @Override
     public void join(Member member) {

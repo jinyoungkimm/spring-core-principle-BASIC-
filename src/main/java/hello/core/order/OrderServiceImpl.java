@@ -8,16 +8,21 @@ import hello.core.member.MemberRepository;
 import hello.core.member.MemoryMemberRepository;
 
 public class OrderServiceImpl implements OrderService {
-
-    private final MemberRepository memberRepository = new MemoryMemberRepository();
     /**
-     * 多態性により役割と実装を分離したが二点の問題点が存在
-     * ・DIP違反 : インターフェースに依存しているが同時に実装体にも依存
-     * ・OCP違反 : 機能の拡張と共にクライアント側のコード変更も発生
-     * →純粋なJAVAだけでは多態性は守れない(この問題は段階的に解決していく予定、最終的にはSpringのDI Containerを使って解決)
+     * DIP遵守 : インターフェースだけに依存
+     * → fianlでもコンストラクタにより初期化すれば、コンパイラーエラーは発生しない
      */
-    //private final DiscountPolicy discountPolicy = new FixDiscounPolicy();
-    private final DiscountPolicy discountPolicy = new RateDiscountPolicy();
+    private final MemberRepository memberRepository;
+    private final DiscountPolicy discountPolicy;
+
+    /**
+     * コンストラクタインジェクション
+     */
+    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = discountPolicy;
+    }
+
     @Override
     public Order createOrder(Member member, String itemName, int itemPrice) {
 
