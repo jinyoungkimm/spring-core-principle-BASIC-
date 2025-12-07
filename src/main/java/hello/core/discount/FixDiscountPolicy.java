@@ -6,7 +6,7 @@ import hello.core.member.Member;
 /**
  * 固定金額割引
  */
-public class FixDiscounPolicy implements DiscountPolicy{
+public class FixDiscountPolicy implements DiscountPolicy{
 
     // 1,000円
     private final int discountFixAmount = 1000;
@@ -19,6 +19,5 @@ public class FixDiscounPolicy implements DiscountPolicy{
         } else {
             return 0;
         }
-
     }
 }

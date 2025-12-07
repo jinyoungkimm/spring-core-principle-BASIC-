@@ -1,6 +1,7 @@
 package hello.core;
 
 import hello.core.discount.DiscountPolicy;
+import hello.core.discount.FixDiscountPolicy;
 import hello.core.discount.RateDiscountPolicy;
 import hello.core.member.MemberRepository;
 import hello.core.member.MemberService;
@@ -11,16 +12,11 @@ import hello.core.order.OrderServiceImpl;
 
 
 /**
- * ２点の問題点
- * ・アプリケーションの全体構成が把握しにくい
- * →　役割　: メソッドのリターンタイプとメソッド名で把握
- * →　実装　: メソッド内の "return new ~~"部分で把握
- * →　上記の箇所で役割と実装が明白に把握できるようにする
- * 
- * ・new MemoryMemberRepository()という重複が存在
- * →　容易な変更のため、メソッド化
+ * AppConfigの存在意味
+ * →　アプリケーション全体を構成領域(AppConfig)と使用領域(MemberServiceImpl, OrderServiceImplなど)に分離
+ * →　OCP遵守　: それにより新しい割引政策を適用しても、クライアント側の変更はなくAppConfigだけを変更すれば良くなった
+ * →　以前は割引政策の変更のため、クライアント側(OrderServiceImpl)を変更しなければならなかった
  */
-
 public class AppConfig {
 
     public MemberService memberService() { // 役割
@@ -35,12 +31,11 @@ public class AppConfig {
     }
 
     private DiscountPolicy discountPolicy() {// 役割
-        return new RateDiscountPolicy();// 実装
+        // return new FixDiscountPolicy();// 実装
+        return new RateDiscountPolicy();// 新しい割引政策定期用
     }
 
     private MemberRepository memberRepository() {// 役割
         return new MemoryMemberRepository();// 実装
     }
-
-
 }

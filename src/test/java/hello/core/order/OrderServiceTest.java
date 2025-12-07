@@ -9,6 +9,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class OrderServiceTest {
 
     private MemberService memberService;
@@ -32,11 +34,11 @@ public class OrderServiceTest {
         Long memberId = 1L;
         Member member = new Member(memberId, "jyk", Grade.VIP);
         memberService.join(member);
-        Order order = orderService.createOrder(member, "キムのスプリング講義", 100000);
+        Order order = orderService.createOrder(member, "キムのスプリング講義", 12000);
 
         //when
 
         //then
-        Assertions.assertThat(order.getDiscountPrice()).isEqualTo(10000);
+        assertThat(order.getDiscountPrice()).isEqualTo(1200);
     }
 }

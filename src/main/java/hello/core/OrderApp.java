@@ -20,7 +20,7 @@ public class OrderApp {
         Member member = new Member(memberId, "jyk", Grade.VIP);
         memberService.join(member);
 
-        Order order = orderService.createOrder(member, "キムのスプリング講義", 10000);
+        Order order = orderService.createOrder(member, "キムのスプリング講義", 12000);
         System.out.println("order = " + order);
 
     }
