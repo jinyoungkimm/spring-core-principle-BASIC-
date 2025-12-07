@@ -1,0 +1,362 @@
+Japanese Version（日本語版）
+Q. なぜ JUnit のテストコードを書くとき、Spring を使わずに純粋な Java コードでテストするのか？
+✅ まず結論
+
+Spring を使わないテスト（純粋なユニットテスト） は
+👉 高速・軽量・独立的で、バグをより正確に発見できるから。
+そのため、業界では
+「Spring なしのテストが基本」「Spring を使うテストは例外」 という原則がある。
+
+✅ 1. テスト実行速度が圧倒的に速いから
+
+Spring コンテナを起動すると：
+
+Bean スキャン
+
+DI 設定
+
+AOP 設定
+
+プロパティ読み込み
+
+DB 接続設定
+
+などがすべて実行される。
+
+➡️ 0.5 ～ 3 秒 ほどかかる。
+
+一方、純粋な Java オブジェクトのテストは
+➡️ 0.001 秒レベルで終了 する。
+
+テストが 100 個を超えると、差が非常に大きくなる。
+
+✅ 2. Spring を使うと「純粋なロジック検証」が難しくなる
+
+Spring を介すと、以下の要素が絡む：
+
+Bean 生成
+
+@Autowired
+
+@Transactional
+
+AOP / Proxy
+
+そのためテストが失敗すると：
+
+「コードの問題？」
+
+「Spring 設定の問題？」
+
+と判別が難しくなる。
+
+純粋な Java テストは ビジネスロジックだけ を確認するため、より正確。
+
+✅ 3. ユニットテストは外部環境に依存してはいけない
+
+良いユニットテストの条件：
+
+DB 接続なし
+
+Spring コンテキストなし
+
+ネットワーク呼び出しなし
+
+ファイル I/O なし
+
+つまり 外部依存ゼロ。
+
+Spring を起動した時点で、ユニットテストではなくなる。
+
+✅ 4. 保守性・デバッグ性が圧倒的に良くなる
+
+純粋な Java テストでは：
+
+クラスが何を依存しているか
+
+メソッドの入力と出力
+
+がすべて明確。
+
+Spring DI に依存すると：
+
+どの Bean が注入されるか IDE が追いきれない
+
+テストの目的がぼやける
+
+という問題がある。
+
+✅ 5. テストが壊れにくい
+
+Spring ベースのテストは以下で簡単に壊れる：
+
+Bean 名の衝突
+
+設定ファイルの変更
+
+@Transactional の追加
+
+プロパティ値の変更
+
+純粋な Java テストはこれらの影響を受けない。
+
+✅ 6. Spring を使うテストは統合テストのときだけ必要
+
+目的は次の通り：
+
+テスト種類	Spring 必要？	目的
+ユニットテスト	❌ 不要	純粋なロジック検証（高速・安定）
+統合テスト（@SpringBootTest）	✔ 必要	Bean 連携 / DB / 全体動作の確認
+コントローラテスト（@WebMvcTest）	✔ 必要	API レイヤーの検証
+
+Spring テストは 重くて高コスト なので、
+システムが正しく結線されているか確認する場合のみ使う。
+
+
+-------------------------------------------------------------------------------------------------------------
+English Version
+Q. Why do we write JUnit tests using pure Java code instead of using Spring?
+✅ Summary First
+
+Writing tests without Spring (pure unit tests) is
+👉 faster, lighter, independent, and better at catching real bugs.
+This is why the rule is: “Tests without Spring are the default; tests with Spring are the exception.”
+
+✅ 1. Because the test execution speed is dramatically faster
+
+Starting a Spring container requires:
+
+Bean scanning
+
+Dependency Injection setup
+
+AOP configuration
+
+Property loading
+
+Database connection setup
+
+➡️ This typically takes 0.5 to 3 seconds.
+
+A pure Java object test runs
+➡️ in about 0.001 seconds.
+
+With 100+ tests, the time difference becomes enormous.
+
+✅ 2. Using Spring makes “pure logic verification” difficult
+
+When Spring is involved, many factors come into play:
+
+Bean creation
+
+@Autowired
+
+@Transactional
+
+Proxy and AOP behavior
+
+So a failing test becomes:
+
+“Is it my code?”
+
+“Or is it a Spring configuration issue?”
+
+Pure Java tests verify only the real business logic, so they are more accurate.
+
+✅ 3. Proper unit tests must not depend on external environments
+
+Good unit tests should not involve:
+
+DB connections
+
+Spring context
+
+Network calls
+
+File I/O
+
+Unit tests must have zero external dependencies.
+
+If you start Spring, you already break this rule.
+
+✅ 4. Better maintainability and easier debugging
+
+Pure Java tests make it clear:
+
+What dependencies a class needs
+
+What input/output each method has
+
+When relying on Spring DI:
+
+It’s harder to track which Bean is injected
+
+The focus of the test becomes blurred
+
+✅ 5. Tests are less fragile
+
+Spring-based tests break easily because of:
+
+Bean name conflicts
+
+Changes in configuration or component scanning
+
+Added @Transactional
+
+Modified property values
+
+Pure Java tests are immune to these environmental changes.
+
+✅ 6. Spring tests should be used only for integration testing
+
+Here’s the intended purpose:
+
+Test Type	Needs Spring?	Purpose
+Unit Test	❌ No	Pure logic verification (Fast, Stable)
+Integration Test (@SpringBootTest)	✔ Yes	Validate system-wide behavior / DI / DB
+Controller Test (@WebMvcTest)	✔ Yes	Test only the API layer
+
+Spring tests are heavy and expensive, used only to verify that the system is wired correctly.
+
+🔥 Final Summary (Very Intuitive)
+❌ When you use Spring:
+
+Heavy
+
+Slow
+
+Easily broken by configuration
+
+Test intent is unclear
+
+✅ When you use pure Java:
+
+Fast
+
+Lightweight
+
+Clear
+
+Verifies the real logic
+
+👉 That’s why 90% of unit tests should be written without Spring in modern development.
+
+-------------------------------------------------------------------------------------------------------------
+Korean Version
+Q. 왜 junit에서 테스트 코드를 만들 때 spring을 사용하지 않고 순수 자바 코드로 테스트 코드를 만드는 건가?
+
+✅ 결론 먼저
+
+**Spring을 사용하지 않는 테스트(=순수 단위 테스트)**는
+👉 빠르고, 가볍고, 독립적이며, 버그를 더 정확히 찾을 수 있기 때문이다.
+그래서 “Spring 없는 테스트가 기본”, “Spring 있는 테스트는 예외”라는 원칙이 생긴다.
+
+✅ 1. 테스트 속도가 압도적으로 빠르기 때문
+
+Spring 컨테이너를 띄우면
+
+Bean 스캔
+
+DI 구성
+
+AOP 설정
+
+프로퍼티 로딩
+
+DB 연결 설정
+등이 전부 실행된다.
+
+➡️ 평균적으로 0.5 ~ 3초 정도 소요
+반면 순수 자바 객체 테스트는
+➡️ 실행 즉시 0.001초급으로 끝난다.
+
+단위 테스트가 100개만 돼도 속도 차이가 엄청나다.
+
+✅ 2. Spring을 사용하면 테스트가 “순수 로직 검증”이 어려워짐
+
+Spring이 개입되면 Bean, Autowired, Transaction 등 많은 요소가 개입한다.
+그 말은…
+
+테스트 실패 → “코드 문제인지 Spring 설정 문제인지” 판단이 어려움
+
+작은 로직 오류가 Spring 때문에 가려짐
+
+그래서 핵심 비즈니스 로직은 Spring 없이 테스트하는 것이 더 정확하다.
+
+✅ 3. 단위 테스트는 외부 환경에 의존하면 안 되기 때문
+
+좋은 단위 테스트(Unit Test)의 조건:
+
+DB 연결 없음
+
+스프링 컨텍스트 없음
+
+네트워크 호출 없음
+
+파일 I/O 없음
+
+즉, 외부 환경이 0이어야 한다.
+
+Spring을 켜는 순간 → 이미 “환경”이기 때문에 단위 테스트가 아님.
+
+✅ 4. 유지보수성 + 디버깅이 훨씬 좋아짐
+
+순수 자바 객체 테스트는
+
+어떤 클래스가 어떤 의존성을 필요로 하는지
+
+어떤 입력·출력으로 동작하는지
+
+전부 코드 차원에서 투명하게 보임.
+
+Spring DI에 의존하면
+“어떤 Bean이 주입되는지”도 IDE가 100% 추적 못하고, 테스트 목적이 흐려짐.
+
+✅ 5. 테스트가 깨지기 쉽지 않음
+
+Spring 컨텍스트 테스트는 다음 같은 이유로 쉽게 깨짐:
+
+Bean 이름 충돌
+
+구성 클래스 바뀜
+
+@Transactional 추가됨
+
+Property 값 변경됨
+
+순수 자바 테스트는 이러한 환경 변화에서 안전함.
+
+✅ 6. Spring 있는 테스트는 통합 테스트를 할 때만 필요
+
+Spring을 사용하는 테스트는 목적이 명확함:
+
+테스트 종류	Spring 필요?	목적
+단위 테스트	❌ X	순수 로직 검증 (Fast, Stable)
+통합 테스트 (@SpringBootTest 등)	⭕ O	Bean 연결/DB/서비스 전체 흐름 검증
+컨트롤러 테스트 (@WebMvcTest)	⭕ O	API 레이어만 테스트
+
+즉,
+Spring Test는 “전체 흐름이 잘 연결되어 있는지”를 볼 때만 사용하는 비싼 테스트임.
+
+🔥 핵심 요약 (아주 직관적)
+❌ Spring 띄우면
+
+무겁다
+
+느리다
+
+설정 때문에 깨진다
+
+테스트 목적이 흐려진다
+
+✅ 순수 Java로 하면
+
+빠르다
+
+가볍다
+
+명확하다
+
+진짜 로직 검증이 가능하다
+
+👉 그래서 “단위 테스트 90%는 Spring 없이 작성”이 업계 표준이다.
