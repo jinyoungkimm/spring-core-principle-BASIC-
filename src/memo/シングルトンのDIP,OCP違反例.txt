@@ -1,0 +1,18 @@
+// シングルトン
+public class SingletonService {
+    private static final SingletonService instance = new SingletonService();
+
+    private SingletonService() {}
+
+    public static SingletonService getInstance() {
+        return instance;
+    }
+}
+
+
+// クライアント側
+public class Client {
+    // インターフェースではなく、実装クラスへ依存している(DIP違反)
+　  // → 変更の際、クライアントコードに変更が発生(OCP違反)
+    private SingletonService service = SingletonService.getInstance();
+}
