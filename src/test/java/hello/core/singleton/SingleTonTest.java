@@ -31,4 +31,18 @@ class SingleTonTest {
         // memberServiceA != memberServiceB
         assertThat(memberServiceA).isNotSameAs(memberServiceB);
     }
+
+    @Test
+    @DisplayName("シングルトンを使ったオブジェクト生成")
+    void singleTonService() {
+
+        // クライアントAのリクエスト → オブジェクト生成
+        SingleTonService instanceA = SingleTonService.getInstance();
+
+        // クライアントBのリクエスト → オブジェクト生成
+        SingleTonService instanceB = SingleTonService.getInstance();
+
+        // instanceA == instanceB
+        assertThat(instanceA).isSameAs(instanceB);
+    }
 }
