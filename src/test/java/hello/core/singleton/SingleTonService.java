@@ -32,7 +32,7 @@ class SingleTonService {
  * → private static final SingleTonService instance = new SingleTonService()で実装クラスへ依存している
  *
  * ・テストがしにくい。
- * → finalによりクラスローディング時点で初期化が一度しか起きないので、多様なテストケースを作ることが出来ない
+ * → finalによりクラスローディング時点で初期化が一度しか起きないので、多様な依存関係のテストケースを作ることが出来ない
  *
  * ・内部状態の変更や初期化が困難である。
  * → finalによりクラスローディング時点で初期化が一度しか起きない
