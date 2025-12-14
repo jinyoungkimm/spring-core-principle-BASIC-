@@ -28,4 +28,9 @@ public class OrderServiceImpl implements OrderService {
 
         return new Order(member.getId(), itemName,itemPrice,discountPrice);
     }
+
+    //　シングルトンのテスト用
+    public MemberRepository getMemberRepository() {
+        return this.memberRepository;
+    }
 }

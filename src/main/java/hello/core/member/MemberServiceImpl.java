@@ -23,4 +23,9 @@ public class MemberServiceImpl implements MemberService{
     public Member findMember(Long memberId) {
         return memberRepository.findById(memberId);
     }
+
+    //　シングルトンのテスト用
+    public MemberRepository getMemberRepository() {
+        return this.memberRepository;
+    }
 }
