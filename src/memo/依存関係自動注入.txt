@@ -1,0 +1,10 @@
+【@ComponentScan による Bean 登録に関する疑問】
+
+Q.
+AppConfig クラスでは、コンストラクタの引数で依存関係を設定していたが、
+@ComponentScan を利用する場合、
+@Component が付与されたクラスの依存関係はどのように注入されるのか。
+
+A.
+@Autowired アノテーションを使用することで、
+Spring コンテナが依存関係を自動的に注入する。
