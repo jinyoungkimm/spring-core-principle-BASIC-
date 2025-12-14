@@ -1,0 +1,49 @@
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public MemberService memberService() { // 役割
+        return new MemberServiceImpl(memberRepository()); // 実装
+    }
+
+    @Bean
+    public OrderService orderService() {// 役割
+        return new OrderServiceImpl(// 実装
+                memberRepository(),
+                discountPolicy()
+        );
+    }
+
+    @Bean
+    public DiscountPolicy discountPolicy() {// 役割
+        // return new FixDiscountPolicy();// 実装
+        return new RateDiscountPolicy();// 新しい割引政策定期用
+    }
+
+    @Bean
+    public MemberRepository memberRepository() {// 役割
+        return new MemoryMemberRepository();// 実装
+    }
+}
+
+Spring コンテナは Bean をシングルトンとして登録する。
+しかし、ここで一つ疑問が生じる。
+
+new AnnotationConfigApplicationContext(AppConfig.class) が実行されると、
+
+・memberService() が呼び出される
+　→ memberRepository() が呼び出される
+　→ new MemoryMemberRepository()
+
+・orderService() が呼び出される
+　→ memberRepository() が呼び出される
+　→ new MemoryMemberRepository()
+
+→ つまり、MemoryMemberRepository のインスタンスが 2 回生成されることになる。
+
+一般的な常識から考えると、
+同じ Bean オブジェクトが 2 つ Spring に登録され、
+シングルトンパターンが破綻するのが自然である。
+
+では、Spring はこの問題をどのように解決しているのか。
+それこそが、この講義の核心である。
