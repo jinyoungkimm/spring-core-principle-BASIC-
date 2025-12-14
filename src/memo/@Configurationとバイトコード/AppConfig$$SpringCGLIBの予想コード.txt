@@ -21,3 +21,38 @@ class AppConfig$$SpringCGLIB extends AppConfig {
 
 ・実際はもっと複雑
 ・@Configurationなしで＠BeanだけでもSpring Containerに登録されるが、シングルトンは担保されない
+→下のコードで詳細を説明
+
+// @Configuration
+public class AppConfig {
+
+    @Bean - 実行１
+    public MemberService memberService() { // 役割
+        return new MemberServiceImpl(memberRepository()); // 実装
+    }
+
+    @Bean - 実行２
+    public OrderService orderService() {// 役割
+        return new OrderServiceImpl(// 実装
+                memberRepository(),
+                discountPolicy()
+        );
+    }
+
+    @Bean
+    // 【＠Configuration省略による問題現象】
+    // 実行１でmemberRepository()が呼び出されてnew MemoryMemberRepository()がSpring Containerに登録
+    // 実行２ではSpring Continerにあるnew MemoryMemberRepository()を呼び出すのではなく新たなnew MemoryMemberRepository()がSpring Containerに登録
+    // → AppConfig$$SpringCGLIBのロジックを見れば分かると思うが、Spring ContainerからまずはMemoryMemberRepositoryオブジェクトを探す
+    // しかし@Configurationを省略したことでSpring Containerの中に既に登録されているMemoryMemberRepositoryオブジェクトを探さず、JAVAコード通りmemberRepository()を再呼び出しする
+    public MemberRepository memberRepository() {// 役割
+        return new MemoryMemberRepository();// 実装
+    }
+
+    @Bean
+    public DiscountPolicy discountPolicy() {// 役割
+        // return new FixDiscountPolicy();// 実装
+        return new RateDiscountPolicy();// 新しい割引政策定期用
+    }
+}
+
