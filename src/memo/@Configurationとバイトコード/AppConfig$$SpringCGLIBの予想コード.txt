@@ -1,0 +1,23 @@
+ 【予想コード】
+class AppConfig$$SpringCGLIB extends AppConfig {
+
+    @Bean
+    @Override
+    public MemberRepository memberRepository() {
+
+        // MemoryMemberRepository がすでに Spring コンテナに登録されている場合
+        if (MemoryMemberRepository がすでに Spring コンテナに存在する場合) {
+            return Spring コンテナから取得して返す;
+        }
+
+        // Spring コンテナに存在しない場合
+        else {
+            // 既存のロジックを呼び出して MemoryMemberRepository を生成し、
+            // Spring コンテナに登録する
+            return 生成したインスタンスを返す;
+        }
+    }
+}
+
+・実際はもっと複雑
+・@Configurationなしで＠BeanだけでもSpring Containerに登録されるが、シングルトンは担保されない
