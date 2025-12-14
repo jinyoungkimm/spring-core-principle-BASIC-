@@ -6,3 +6,5 @@ Ctrl + Alt + m       : ドラッグしたコード範囲を自動的にメソッ
 Ctrl + Shift + t     : テストしたいメソッドをtestフォルダーへ自動生成
 Ctrl + Shift + Enter : 改行
 Ctrl + N             : ライブラリ検索
+Ctrl + B             : 定義元へ移動
+Ctrl + Shift + f     : パッケージ配下の文字列検索(検索対象のパッケージを押下必要)

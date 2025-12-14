@@ -1,0 +1,19 @@
+@Configuration
+class AppConfig {
+   @Bean
+　// 省略	
+
+   @Bean
+   // 以下省略
+
+}
+
+→ @Configuration を付与した AppConfig クラスによる Spring コンテナへの Bean 登録は、開発者が 手動で定義する方法 である
+
+しかし、実務では登録すべき Bean が数百個に及ぶことも珍しくない。
+
+これらをすべて開発者が手動で登録すると、登録漏れが発生する可能性があるだけでなく、作業自体も非常に煩雑になる。
+
+そこで有用なのが、Spring が提供する @ComponentScan というアノテーションである。
+
+@ComponentScan は指定したパッケージ配下を探索し、@Component（およびその派生アノテーション）が付与されたクラスを Spring コンテナに自動的に Bean として登録する 仕組みを提供する。
