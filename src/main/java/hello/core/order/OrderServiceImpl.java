@@ -19,9 +19,12 @@ public class OrderServiceImpl implements OrderService {
     /**
      * コンストラクタインジェクション
      */
+    //@Autowired省略
     public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
         this.memberRepository = memberRepository;
         this.discountPolicy = discountPolicy;
+        System.out.println("memberRepository = " + memberRepository);
+        System.out.println("discountPolicy = " + discountPolicy);
     }
 
     @Override
