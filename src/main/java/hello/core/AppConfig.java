@@ -22,10 +22,11 @@ public class AppConfig {
 
     @Bean
     public OrderService orderService() {// 役割
-        return new OrderServiceImpl(// 実装
-                memberRepository(),
-                discountPolicy()
-        );
+//        return new OrderServiceImpl(// 実装
+//                memberRepository(),
+//                discountPolicy()
+//        );
+    return null;
     }
 
     @Bean

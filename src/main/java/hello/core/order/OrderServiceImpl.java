@@ -13,26 +13,8 @@ public class OrderServiceImpl implements OrderService {
      * → fianlでもコンストラクタにより初期化すれば、コンパイラーエラーは発生しない
      */
 
-    private  MemberRepository memberRepository;
-    private  DiscountPolicy discountPolicy;
-
-    @Autowired(required = false) // Spring ContainerにBeanが登録されてない場合は依存関係注入をしなくてもより
-                                 // デフォルトは required=trueであって、必ず依存関係注入をしなければならない。
-    public void setMemberRepository(MemberRepository memberRepository) {
-        System.out.println("memberRepository = " + memberRepository);
-        this.memberRepository = memberRepository;
-    }
-
-    @Autowired
-    public void setDiscountPolicy(DiscountPolicy discountPolicy) {
-        System.out.println("discountPolicy = " + discountPolicy);
-        this.discountPolicy = discountPolicy;
-    }
-
-    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
-        this.memberRepository = memberRepository;
-        this.discountPolicy = discountPolicy;
-    }
+    @Autowired    private  MemberRepository memberRepository;
+    @Autowired    private  DiscountPolicy discountPolicy;
 
     @Override
     public Order createOrder(Member member, String itemName, int itemPrice) {
@@ -43,7 +25,7 @@ public class OrderServiceImpl implements OrderService {
         return new Order(member.getId(), itemName,itemPrice,discountPrice);
     }
 
-    //　シングルトンのテスト用
+    //　テスト用
     public MemberRepository getMemberRepository() {
         return this.memberRepository;
     }
