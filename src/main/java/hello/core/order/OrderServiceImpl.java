@@ -12,19 +12,26 @@ public class OrderServiceImpl implements OrderService {
      * DIP遵守 : インターフェースだけに依存
      * → fianlでもコンストラクタにより初期化すれば、コンパイラーエラーは発生しない
      */
-    @Autowired
-    private final MemberRepository memberRepository;
-    private final DiscountPolicy discountPolicy;
 
-    /**
-     * コンストラクタインジェクション
-     */
-    //@Autowired省略
+    private  MemberRepository memberRepository;
+    private  DiscountPolicy discountPolicy;
+
+    @Autowired(required = false) // Spring ContainerにBeanが登録されてない場合は依存関係注入をしなくてもより
+                                 // デフォルトは required=trueであって、必ず依存関係注入をしなければならない。
+    public void setMemberRepository(MemberRepository memberRepository) {
+        System.out.println("memberRepository = " + memberRepository);
+        this.memberRepository = memberRepository;
+    }
+
+    @Autowired
+    public void setDiscountPolicy(DiscountPolicy discountPolicy) {
+        System.out.println("discountPolicy = " + discountPolicy);
+        this.discountPolicy = discountPolicy;
+    }
+
     public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
         this.memberRepository = memberRepository;
         this.discountPolicy = discountPolicy;
-        System.out.println("memberRepository = " + memberRepository);
-        System.out.println("discountPolicy = " + discountPolicy);
     }
 
     @Override
