@@ -24,15 +24,4 @@ class AutoConfigTest {
         MemberRepository memberRepository = bean.getMemberRepository();
         System.out.println("memberRepository = " + memberRepository);
     }
-
-    @Test
-    void filedInjection() {
-        /**
-         * SPringによって注入されたMemberRepositoryではなくMockオブジェクトでテスト
-         */
-        OrderServiceImpl orderService = new OrderServiceImpl(); // Springを使ってない純粋なJAVAコード
-
-        // Springフレームワークを使ってないので当然依存関係注入はされず、実行するとNullPointerExceptionエラー発生
-        orderService.createOrder(new Member(1L,"jyk", Grade.VIP),"itemA",1000);
-    }
 }
