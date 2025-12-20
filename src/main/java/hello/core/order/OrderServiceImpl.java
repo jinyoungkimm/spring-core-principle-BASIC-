@@ -3,10 +3,13 @@ package hello.core.order;
 import hello.core.discount.DiscountPolicy;
 import hello.core.member.Member;
 import hello.core.member.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor // Required Args : パラメーターが要求される、Constructor : コンストラクタ
+                         // つまり、finalキーワードが付いていて、パラメーターで必ず依存関係注入をするコンストラクタを自動生成してくれる
 public class OrderServiceImpl implements OrderService {
     /**
      * DIP遵守 : インターフェースだけに依存
@@ -15,14 +18,15 @@ public class OrderServiceImpl implements OrderService {
     private final MemberRepository memberRepository;
     private final DiscountPolicy discountPolicy;
 
-    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
-        /**
-         * finalを付けると初期化の漏れがあった場合、コンパイラーエラーが発生するので
-         * ここでの注入漏れをも未然に防止することもできる
-         */
-        this.memberRepository = memberRepository;
-        this.discountPolicy = discountPolicy;
-    }
+    /**
+     * lomBokの@RequiredArgsConstructorによりコンストラクタコードの省略(最近のトレンドである)
+     * →　コードがとてもシンプルになった
+     */
+//    @Autowired
+//    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+//        this.memberRepository = memberRepository;
+//        this.discountPolicy = discountPolicy;
+//    }
 
     @Override
     public Order createOrder(Member member, String itemName, int itemPrice) {

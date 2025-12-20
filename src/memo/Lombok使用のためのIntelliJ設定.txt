@@ -1,0 +1,3 @@
+LombokをIntelliJで使うには設定が必要
+1.setting- > plugin -> Lombok Pluginインストール
+2.setting -> Enable Annotation processingを設定
