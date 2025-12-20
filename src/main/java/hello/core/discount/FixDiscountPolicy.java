@@ -2,10 +2,12 @@ package hello.core.discount;
 
 import hello.core.member.Grade;
 import hello.core.member.Member;
+import org.springframework.stereotype.Component;
 
 /**
  * 固定金額割引
  */
+@Component
 public class FixDiscountPolicy implements DiscountPolicy{
 
     // 1,000円
