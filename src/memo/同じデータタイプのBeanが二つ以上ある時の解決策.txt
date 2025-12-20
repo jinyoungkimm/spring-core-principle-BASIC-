@@ -89,3 +89,14 @@ public class RateDiscountPolicy implements DiscountPolicy {}
 
 この構成であれば、
 @Qualifier("mainDiscountPolicy") が付与された実装クラスが注入されることが明確に分かる
+
+
+・@Primary使用
+　・アプリケーションコードで依存関係の変更が全くない訳ではない時有用
+    →例えば、９割で使うmain DBがあった時、そのクラスに@Primaryを付けて、もし時によって1割で使うsub DBを使う時には@Qqualifierを使って依存関係注入をする
+    そうすることで開発者は@Primaryアノテーションを見て”あ！これがmain DBだなあ”って把握しやすくなる。(チームメンバーとの約束が必要)
+　・@Qualifier見たいに依存関係に関わるすべてのクラスにアノテーションを付けるので開発者がコードの把握に困難
+
+
+※@Qqualifierと@Primaryが同時に付いている時
+→ @Qqualifierが優先権を持つ

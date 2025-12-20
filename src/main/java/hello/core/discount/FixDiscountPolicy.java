@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
  * 固定金額割引
  */
 @Component
-@Qualifier("fixDiscountPolicy")
 public class FixDiscountPolicy implements DiscountPolicy{
 
     // 1,000円
