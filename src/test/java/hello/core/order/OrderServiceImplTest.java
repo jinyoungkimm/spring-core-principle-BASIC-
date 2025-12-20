@@ -1,30 +1,32 @@
 package hello.core.order;
 
+import hello.core.discount.FixDiscountPolicy;
 import hello.core.member.Grade;
 import hello.core.member.Member;
+import hello.core.member.MemberRepository;
+import hello.core.member.MemoryMemberRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OrderServiceImplTest {
+
     /**
-     * setterによる注入の場合、Springフレームワークなしでテストコード作成時どんな問題が出るか確認
+     * コンストラクタ注入の場合、setterによる注入で起こり得る問題を未然にコンパイラータイムで知らせるくれる
      */
     @Test
-    void createOrderFail() {
+    void createOrderSuccess() {
 
-        OrderServiceImpl orderService = new OrderServiceImpl();
-        // NullPointerException発生
-        Assertions.assertThrows(NullPointerException.class,
-                () -> orderService.createOrder(new Member(1L,"jyk", Grade.VIP),"itemA", 10000)
-        );
-        /**
-         * エラーの原因 : OrderServiceImplの依存関係注入をしていない
-         * ・createOrderFailメソッドを見ただけではOrderServiceImplにどんな依存関係を注入すべきか見えない
-         * →開発者がOrderServiceImplクラスを探って直接確認しなければならない煩雑さがある
-         * →開発者がsetterによる依存関係注入を忘れる場合がある
-         * →開発者がsetterによって依存関係を注入したとしても、注入の漏れがあるかもしれない
-         */
+        MemberRepository memberRepository = new MemoryMemberRepository();
+        Member jyk = new Member(1L, "jyk", Grade.VIP);
+        memberRepository.save(jyk);
+
+        // 依存関係注入に漏れがある場合、コンパイラーエラーを出す
+        OrderServiceImpl orderService = new OrderServiceImpl(new MemoryMemberRepository(), new FixDiscountPolicy());
+        Order order = orderService.createOrder(jyk, "itemA", 10000);
+
+        assertThat(order.getDiscountPrice()).isEqualTo(1000);
     }
 }

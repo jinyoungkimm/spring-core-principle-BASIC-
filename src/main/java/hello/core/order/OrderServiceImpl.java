@@ -12,26 +12,14 @@ public class OrderServiceImpl implements OrderService {
      * DIP遵守 : インターフェースだけに依存
      * → fianlでもコンストラクタにより初期化すれば、コンパイラーエラーは発生しない
      */
-    private  MemberRepository memberRepository;
-    private  DiscountPolicy discountPolicy;
+    private final MemberRepository memberRepository;
+    private final DiscountPolicy discountPolicy;
 
-    @Autowired
-    public void setMemberRepository(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
-
-    @Autowired
-    public void setDiscountPolicy(DiscountPolicy discountPolicy) {
-        this.discountPolicy = discountPolicy;
-    }
-
-//    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
-//        this.memberRepository = memberRepository;
-//        this.discountPolicy = discountPolicy;
-//    }
-
-    @Autowired
-    public void init(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+        /**
+         * finalを付けると初期化の漏れがあった場合、コンパイラーエラーが発生するので
+         * ここでの注入漏れをも未然に防止することもできる
+         */
         this.memberRepository = memberRepository;
         this.discountPolicy = discountPolicy;
     }
