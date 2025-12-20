@@ -4,3 +4,88 @@
 ・依存関係の変数名を実装クラス名に変更
 -> OrderSerivceImpl :: DiscountPolicy "rateDiscuntPolicy"へ変更
 @Autowiredは同じデータタイプのBeanが二つ以上ある時、パラメーター名, field名を基準に依存関係注入を試みる
+
+@Qualifier 使用時の注意点
+
+・@Qualifier で依存関係を注入する際、@Qualifier("mainDiscountPolicy") を見つけられない場合がある。
+
+・最もよくあるケース：Bean 側に @Qualifier を付与していない場合
+（注入される側にのみ Qualifier が付いているケース）
+
+@Autowired
+public OrderService(
+@Qualifier("mainDiscountPolicy") DiscountPolicy discountPolicy
+) {
+this.discountPolicy = discountPolicy;
+}
+
+@Component
+public class RateDiscountPolicy implements DiscountPolicy {
+}
+
+・Qualifier の値と実際の値が一致しない場合
+
+@Component
+@Qualifier("main-discount-policy")
+public class RateDiscountPolicy implements DiscountPolicy {
+}
+
+@Autowired
+@Qualifier("mainDiscountPolicy")
+DiscountPolicy discountPolicy;
+
+・カスタムアノテーションを使用しているが、名前が異なる場合
+
+@Qualifier("mainDiscountPolicy")
+public @interface MainDiscountPolicy {
+}
+
+@Component
+@MainDiscountPolicy
+public class RateDiscountPolicy implements DiscountPolicy {
+}
+
+@Autowired
+@Qualifier("mainDiscountPolicy") // 混在使用（非推奨）
+DiscountPolicy discountPolicy;
+
+見た目は同じに見えても、アノテーションの型が異なれば別の Qualifier である。
+@MainDiscountPolicy ≠ @Qualifier("mainDiscountPolicy")
+
+・タイプミス（実務で最も多い）
+
+@Qualifier("mainDiscountPolciy") // タイプミス
+
+この場合、Spring は Bean 名が mainDiscountPolicy であるかを再度確認し、
+存在すればそれを依存関係として注入する。
+
+@Qualifier 使用方針
+
+「@Qualifier は @Qualifier が付与された Bean を探す用途のみに使用する方が、明確で分かりやすい」
+
+Spring を正しく理解している開発者であれば、次のように解釈する。
+
+「ああ、@Qualifier("mainDiscountPolicy") が付与された Bean が存在するのだな」
+
+しかし、次のコードを見た場合、初級開発者は判断に迷う。
+
+@Component("mainDiscountPolicy")
+public class RateDiscountPolicy implements DiscountPolicy {}
+
+・@Qualifier によって注入されたのか
+・Spring が一致する @Qualifier を見つけられず、
+Bean 名 mainDiscountPolicy によって注入されたのか
+
+このような混乱を避けるため、
+@Qualifier は 해당 Qualifier アノテーションが付与された Bean を探す用途のみに限定するべきである。
+
+@Autowired
+@Qualifier("mainDiscountPolicy")
+DiscountPolicy discountPolicy;
+
+@Component
+@Qualifier("mainDiscountPolicy")
+public class RateDiscountPolicy implements DiscountPolicy {}
+
+この構成であれば、
+@Qualifier("mainDiscountPolicy") が付与された実装クラスが注入されることが明確に分かる

@@ -5,6 +5,7 @@ import hello.core.member.Member;
 import hello.core.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,15 +17,14 @@ public class OrderServiceImpl implements OrderService {
     private final MemberRepository memberRepository;
     private final DiscountPolicy discountPolicy;
 
-    @Autowired private DiscountPolicy rateDiscountPolicy; // field名で依存関係注入
     /**
      * lomBokの@RequiredArgsConstructorによりコンストラクタコードの省略(最近のトレンドである)
      * →　コードがとてもシンプルになった
      */
     @Autowired
-    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy rateDiscountPolicy) {//パラメーター名名で依存関係注入
+    public OrderServiceImpl(MemberRepository memberRepository, @Qualifier("mainDiscountPolicy") DiscountPolicy discountPolicy) {
         this.memberRepository = memberRepository;
-        this.discountPolicy = rateDiscountPolicy;
+        this.discountPolicy = discountPolicy;
     }
 
     @Override
