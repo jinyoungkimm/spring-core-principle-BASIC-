@@ -1,0 +1,6 @@
+※それぞれの方法適用した後@Test :: basicScan()で依存関係注入が正常動作することを確認しょう
+
+同じデータタイプの依存関係の実装クラスが二つ以上の時の解決策
+・依存関係の変数名を実装クラス名に変更
+-> OrderSerivceImpl :: DiscountPolicy "rateDiscuntPolicy"へ変更
+@Autowiredは同じデータタイプのBeanが二つ以上ある時、パラメーター名, field名を基準に依存関係注入を試みる
