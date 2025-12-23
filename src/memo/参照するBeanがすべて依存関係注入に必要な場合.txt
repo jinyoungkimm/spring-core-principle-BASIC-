@@ -1,0 +1,10 @@
+例えば、エンドユーザーが割引政策を自ら決められるとなるとDiscountPolicyデータタイプはRateDiscountPolicyとFixDiscountPolicy両方を注入する必要がある。
+ここでは同じデータタイプにBeanが二つ以上注入する方法を学習する。
+
+
+Q.DiscountServiceクラスには@Configurationも@ComponentScanも付いておらず設定ファイルでもないのに
+どうしてコンストラクタの引数として渡せるのか
+ApplicationContext ac = new AnnotationConfigApplicationContext(AutoAppConfig.class, DiscountService.class);
+
+A. @Configurationも@ComponentScanなどの設定ファイルを示すアノテーションがない場合Springは強制的にBeanとして登録する。
+ただし、これはあくまでテストコード以外では絶対にやってはいけない使い方。テストコードでアプリケーションコードにない新たなBeanが必要な時だけ使おう
