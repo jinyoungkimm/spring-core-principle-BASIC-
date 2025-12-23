@@ -1,0 +1,5 @@
+自動依存関係注入 : @ComponentScanと@Autowiredの組み合わせ
+手動依存関係注入：@Configurationと@Beanの組み合わせ
+
+重要：自動依存関係注入を基本的には使用しょう。決定的に自動だろうが手動だろうが DIP, OCPを遵守できる。
+※詳しいことはPDFを参照
