@@ -1,0 +1,46 @@
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@Documented
+@Qualifier("MainDbConnection")
+public @interface MainDbConnection {
+}
+
+
+
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@Documented
+@Qualifier("SubDbConnection")
+public @interface SubDbConnection {
+}
+
+
+
+
+@Component
+public class MemberServiceImpl implements MemberService{
+    /**
+     *  DIP遵守 : インターフェースだけに依存
+     *  → fianlでもコンストラクタにより初期化すれば、コンパイラーエラーは発生しない
+     */
+    private final DbConnection mainDbConnection;　	
+　 private fianl DbConnection subDbConnection;　	
+    /**
+     * コンストラクタインジェクション
+     */
+    @Autowired
+    public MemberServiceImpl( @MainDbConnection DbConnection mainDbConnection, @SubDbConnection DbConnection subDbConnection ) {
+        this.mainDbConnection = mainDbConnection;
+        this.subDbConnection  = subDbConnection 
+    }
+
+    //以下省略
+}
+
+このように@Qualifierをカスタマイズして、離脱時によるランタイムエラー防止とDB Connectionの依存関係の性格を明確にする際などに有用に使われる。
+
+※もし＠Primaryの使用で問題が無ければ、@Primaryを使うことを原則にしょう。
+だが、@Primaryの使用で困る時にはこういう使い方があることを記憶して置こう。
+( 個人的には@Primayの使用や@Qqualifierに固定文字列を入れて上記の問題などを招くことより@Qqualifierをカスタマイズして使用する方が)

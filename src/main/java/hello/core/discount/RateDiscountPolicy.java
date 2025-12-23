@@ -1,5 +1,6 @@
 package hello.core.discount;
 
+import hello.core.annotation.MainDiscountPolicy;
 import hello.core.member.Grade;
 import hello.core.member.Member;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -7,7 +8,12 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component
-@Primary // DiscountPolicyデータタイプが二つ登録されていても、@Primaryを見てこのクラスを優先的に依存関係注入をする。
+@MainDiscountPolicy // @Qualifer("maaaainDiscountPolicy") のように文字列を使うと、
+                    // タイプミスがあってもコンパイル時にはエラーにならない
+                    // このようなタイプミスによるランタイムエラーを防ぐために、
+                    // @MainDiscountPolicy というカスタムアノテーションを作成する。
+                    // もし @MaaaaainDiscountPolicy のようにアノテーション名を誤って記述した場合、
+                    // 参照対象にそういうアノテーションがないためコンパイル時にエラーとして検出される。
 public class RateDiscountPolicy implements DiscountPolicy{
     private final int discountPercent = 10;
     @Override
