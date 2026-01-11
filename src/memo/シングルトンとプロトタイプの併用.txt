@@ -1,0 +1,8 @@
+prototype Scopeの使用目的は”protoType BeanをSpring Containerに要請する度に新しいBeanが必要”な時に使用することである。
+
+しかし前回見た通り、シングルトンの中でprototype Beanを使う時ずっと同じprototype Beanが維持される問題を見たはず
+
+今回はその解決策を学習する
+
+※因みに、シングルトンを照会する度に新しいprototype Beanの注入を必要とする場合はほとんどないと思って良し。
+→しかし学習する身として知って置くべきことではある。
