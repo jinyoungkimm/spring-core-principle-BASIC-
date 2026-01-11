@@ -1,0 +1,98 @@
+[ObjectProvider, ObjectFactory, JSR-330 Provierはほとんど使われない]
+→ほとんどの場合、シングルトンだけで解決出来るしパラメーターにnewを使って直接新しいオブジェクトを生成させる方法で済む。
+まず、上記のようなDL機能がどういう時に使うかと既存の方法でもカバーできることを確認しょう
+
+
+JSR330 Provider中
+
+・retrieving multiple instances
+→ prototypeのように使われる度に新しいオブジェクト生成が必要な時
+解決策
+    @Scope("singleton")
+    static class ClientBean {
+
+        /*private final Provider<ProtoTypeBean> protoTypeBeanProvier;
+
+        @Autowired
+        ClientBean(Provider<ProtoTypeBean> protoTypeBeanProvier) {
+            this.protoTypeBeanProvier = protoTypeBeanProvier;
+        }*/
+
+        private ProtoTypeBean protoTypeBean;
+
+        ClientBean(ProtoTypeBean protoTypeBeanProvier) {
+                    this.protoTypeBeanProvier = protoTypeBeanProvier;
+        }
+
+        public int logic() {
+            protoTypeBean.addCount();
+            int count = protoTypeBean.getCount();
+            return count;
+        }
+    }
+
+    ClientBean bean = new ClientBean( new ProtoTypeBean() ); // new利用して、新しいprotoTypeを生成
+
+・lazy or optional retrieval of an instance.
+→遅延ローディングが必要な時
+解決策
+    @Scope("singleton")
+    static class ClientBean {
+
+        /*private final Provider<ProtoTypeBean> protoTypeBeanProvier;
+
+        @Autowired
+        ClientBeanTemp2(Provider<ProtoTypeBean> protoTypeBeanProvier) {
+            this.protoTypeBeanProvier = protoTypeBeanProvier; // ObjectProviderがSpring ContainerでBeanを自動的に探して注入する
+        }*/
+
+        private ProtoTypeBean protoTypeBeanProvier;
+
+        public int logic(ProtoTypeBean　protoTypeBeanProvier) {
+            ProtoTypeBean protoTypeBeanProvier = protoTypeBeanProvier; // logic()を呼び出す時に、遅延ローディング
+            protoTypeBean.addCount();
+            int count = protoTypeBean.getCount();
+            return count;
+        }
+    }
+
+・breaking circular dependencies.
+→循環参照エラーを防ぎたい時
+解決策
+遅延ローディング技法を使えば良し
+
+
+・abstracting scope so you can look up an instance in a smaller scope from an instance in a containing scope.
+
+class SingletonService {
+    private final Provider<RequestService> requestServiceProvider;
+
+    public void logic() {
+        RequestService rs = requestServiceProvider.get();
+    }
+}
+
+Providerを使えば、RequestService実装クラスを知らなくて良くて、DIPを遵守できる
+→これもまたRequestServiceを実装クラスをSpring Containerにシングルトンで登録して自動注入すれば良し。
+
+結論 : DL機能はほとんど使われず、既存の方法でカバーできるので止揚しょう
+
+[JAVA標準ライブラリ VS Spring ライブラリ]
+この度、DL機能の学習でSpring ライブラリであるObjectProvider, ObjectFactoryと
+JAVA標準ライブラリであるJSR-330 Providerを学んだ。
+
+開発者たちはこういう疑問を持つはずだ
+Q. 一体どっちを使えばいいんだろう
+A.
+基本方針
+・Springの機能がもっと優れている
+→　Spring API選択
+
+・コードをSpring以外のフレームワークでも実行させる予定がある(９９％の確率でこんなケースはない)
+・JAVA標準と性能の差が薄い
+・SpringでJAVA標準を推奨する場言 - @PostConstruct, @PreDestroy
+→ JAVA標準を選択
+
+※ JPAと違いSpring APIの機能をJAVA標準でも提供することが多々ある(ex. @Injectable).
+しかしHibernateに勝利したJAVA標準のJPAと違い、Springに勝るほどではないので別のフレームワークで
+動作させることが無くて、かつ機能が優れている場合はSpringを選択しょう。

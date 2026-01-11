@@ -2,6 +2,7 @@ package hello.core.scope;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import jakarta.inject.Provider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,15 +131,15 @@ class SingletonWithProtoTypeTest1 {
     @Scope("singleton")
     static class ClientBeanTemp2 {
 
-        private final ObjectProvider<ProtoTypeBean> protoTypeBeanProvier;
+        private final Provider<ProtoTypeBean> protoTypeBeanProvier;
 
         @Autowired
-        ClientBeanTemp2(ObjectProvider<ProtoTypeBean> protoTypeBeanProvier) {
+        ClientBeanTemp2(Provider<ProtoTypeBean> protoTypeBeanProvier) {
             this.protoTypeBeanProvier = protoTypeBeanProvier; // ObjectProviderがSpring ContainerでBeanを自動的に探して注入する
         }
 
         public int logic() {
-            ProtoTypeBean protoTypeBean = protoTypeBeanProvier.getObject(); // 依存関係注入
+            ProtoTypeBean protoTypeBean = protoTypeBeanProvier.get(); // 依存関係注入
             protoTypeBean.addCount();
             int count = protoTypeBean.getCount();
             return count;
