@@ -1,9 +1,6 @@
 package hello.core.lifecycle;
 
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
-
-class NetworkClient implements InitializingBean, DisposableBean {
+class NetworkClient {
 
     private String url;
 
@@ -11,15 +8,17 @@ class NetworkClient implements InitializingBean, DisposableBean {
         System.out.println("コンストラクタ呼び出し、URL : " + url);
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    /**
+     * ・これでSpraing Bean(NetworkClient)コードにSpring Containerへの依存性がなくなった
+     * ・これで初期化・消滅メソッド名を自由に変更できる
+     */
+    public void init() {
         connect();
         call("初期化メッセージ");
     }
 
-    @Override
-    public void destroy() throws Exception {
-        System.out.println("NetworkClient destroy()");
+    public void close() {
+        System.out.println("NetworkClient close()");
         disconnect();
     }
 
