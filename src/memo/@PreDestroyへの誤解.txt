@@ -1,0 +1,5 @@
+@PreDestroyへの誤解
+
+"@PreDestroyをjakarataパッケージで提供するからって開発者がオブジェクトをメモリーから削除出来るものではない"
+→こののアノテーションはSpring Containerのために作ったJAVA標準アノテーションである。
+だからGarbagae Collectorの役割をするものではなのでSpring Containerなくしては意味は全く成さない。
