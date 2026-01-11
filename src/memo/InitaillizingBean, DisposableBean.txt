@@ -1,0 +1,51 @@
+InitailizeBean, Disposableのような初期化・消滅インターフェースはほとんど使われてない
+・二つのインターフェースはSpring専用のインターフェースであるため、コードが[Springに依存]してしまう
+※ここで言う「初期化」は依存関係の注入を意味してない。テストコードにもあるようにクラスにあるURLなどのそのクラスの役割の実行のためのPropertyを意味する
+
+
+[Springに依存]の正確な意味
+・コンパイルタイムに依存
+public class MyBean implements InitializingBean, DisposableBean {
+
+    @Override
+    public void afterPropertiesSet() {
+        // 初期化ロジック
+    }
+
+    @Override
+    public void destroy() {
+        // 消滅ロジック
+    }
+}
+→　InitializingBean, DisposableBeanは Spring FrameworkのBeanライフサイクル上でしか動作しないので下のSpringライブラリが無いと、そもそもコンパイルさえ出来ない。
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.DisposableBean;
+
+→　afterPropertiesSet()とdestroy()はSpring Containerによってのみ実行されるのでSpring Containerがないと絶対実行されない。
+
+[Springに依存]の問題点
+・純粋なJAVAのテストコードの作成不可能
+
+MyBean bean = new MyBean();
+→このオブジェクト生成は純粋なJAVAコード方法である。しかし、afterPropertiesSet()とdestroy()はSpring Containerのみ呼び出せるので
+テスト時下のように開発者が直接下のようにコードにafterPropertiesSet()とdestroy()を明示しなければならない。そうなるとSpring Containerがないと
+実行が出来ないテストコードになってしまう。
+
+MyBean bean = new MyBean();
+bean.afterPropertiesSet(); // Spring Containerに依存
+
+・他のDI Containerに移植不可能
+もし状況が変わり、一部のオブジェクトを他のDI Containerで管理することになって:
+Spring → Micronaut
+Spring → Quarkus
+Spring → 純粋Java
+へ変更する場合は?
+👉 InitializingBean, DisposableBeanを継承しているクラスはすべて修正対象となる。これはOCP違反。
+
+・外部ライブラリに適用不可能
+→コンパイルされたClassFileは開発者が修正できない。そのような場合は二つのインターフェースはそもそも使用不可能
+
+※このインターフェース達はSpring誕生後まもなくして、作られた物でであり今はこれらよりもっと良いインターフェースが
+あるため、ほとんど使われてない
+
+※ネタをばらすと、JAVA標準アノテーションである@PostConstruct, @PreDestroyを使う。
