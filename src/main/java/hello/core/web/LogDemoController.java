@@ -14,16 +14,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class LogDemoController {
 
     private final LogDemoService logDemoService;
-    private final ObjectProvider<MyLogger> myLogger; // MyLoggerが注入されるのではなく、MyLoggerのDLオブジェクトが注入される
-
+    private final MyLogger myLogger; // Springサーバーを立ち上げた時点で、ProxyMyLoggerが注入される
     @RequestMapping("log-demo")
     @ResponseBody
     public String logDemo(HttpServletRequest request) {
 
         String requestURL = request.getRequestURL().toString();
-        MyLogger myLogger = this.myLogger.getObject(); // 遅延ローディングによってHTTP Requestが来た時、Bean登録及び注入
-        myLogger.setRequestURL(requestURL);
-
+        myLogger.setRequestURL(requestURL); // このタイミングで本物のMyLoggerが注入されるのではなく
+                                            // ProxyMyLoggerでMyLogger.setRequestURL()を呼び出す。(Proxyパターン)
         myLogger.log("controller test");
         logDemoService.logic("testID");
         return "ok";
