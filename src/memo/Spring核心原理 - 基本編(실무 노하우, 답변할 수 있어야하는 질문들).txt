@@ -178,3 +178,31 @@ public class OrderService {
 구현체를 직접 찾아야 하는 "추상화 비용"이 발생을 한다.
 Tip : 향후 기능의 확장의 가능성이 거의 없다면 구체화에 의존하자!!! 그리고 만약 향후에 확장이 된다고 하면 그때
 인터페이스로 설계를 리팩터링하자!!
+
+[Q.도메인 개념]
+백엔드에서 도메인이란 "업무 규칙과 행동(비즈니스 로직)을 포함한 개념"인데, 이렇게 들어도 전혀 이해가 안 될 것이니 아래의 코드를 보고 이해하면 쉽다
+
+class Building {
+    constructor(
+        public id: number,
+        public address: string,
+        public rooms: Room[]
+    ) {}
+
+    addRoom(room: Room) {
+        this.rooms.push(room);
+    }
+}
+
+class Room {
+    constructor(
+        public id: number,
+        public number: string,
+        public floor: number
+    ) {}
+}
+
+도메인
+・도메인 객체(Domain Object) : class Building, class Room
+・업무 규칙(Business Logic) : addRoom 메서드
+→　도메인이란 도메인 객체와 업무 규칙을 나타내는 메서드로 구성돼 있다고 이해를 하면 된다.
